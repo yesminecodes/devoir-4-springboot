@@ -1,6 +1,8 @@
 package com.yesmine.games.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -9,8 +11,15 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idGame;
+    @NotNull
+    @Size(min = 3,max = 30)
     private String nomGame;
+    @Min(value = 0)
+    @Max(value = 10000)
     private Double prixGame;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @PastOrPresent
     private Date dateCreation;
     @ManyToOne
     private Type type;
@@ -62,5 +71,6 @@ public class Game {
     public String toString() {
         return "Game [idGame=" + idGame + ", nomGame=" + nomGame + ", prixGame=" + prixGame + ", dateCreation=" + dateCreation + "]";
     }
+
 
 }

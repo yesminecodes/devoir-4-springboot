@@ -23,6 +23,7 @@ public interface GameService {
     List<Game> findByTypeIdType(Long id);
     List<Game> findByOrderByNomGameAsc();
     List<Game> trierGamesNomsPrix();
+    List<Type> getAllTypes();
 
 
 }

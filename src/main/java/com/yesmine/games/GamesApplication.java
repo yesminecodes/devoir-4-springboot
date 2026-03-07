@@ -21,11 +21,11 @@ public class GamesApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        gameService.saveGame(new Game("FIFA 25", 60.0, new Date()));
+        /*gameService.saveGame(new Game("FIFA 25", 60.0, new Date()));
         gameService.saveGame(new Game("Call of Duty", 55.0, new Date()));
         gameService.saveGame(new Game("Minecraft", 30.0, new Date()));
         gameService.saveGame(new Game("GTA V", 40.0, new Date()));
-        gameService.saveGame(new Game("Fortnite", 0.0, new Date()));
+        gameService.saveGame(new Game("Fortnite", 0.0, new Date()));*/
     }
 
 }

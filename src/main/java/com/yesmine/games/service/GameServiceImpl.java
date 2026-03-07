@@ -3,6 +3,7 @@ package com.yesmine.games.service;
 import com.yesmine.games.model.Game;
 import com.yesmine.games.model.Type;
 import com.yesmine.games.repos.GameRepository;
+import com.yesmine.games.repos.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -69,6 +70,12 @@ public class GameServiceImpl implements GameService{
     @Override
     public List<Game> trierGamesNomsPrix() {
         return gameRepository.trierGamesNomsPrix();
+    }
+    @Autowired
+    TypeRepository typeRepository;
+    @Override
+    public List<Type> getAllTypes() {
+        return typeRepository.findAll();
     }
 
 }

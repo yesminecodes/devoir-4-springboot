@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
+<head>
+    <meta charset="utf-8">
+    <title>Ajout des Games</title>
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+</head>
+<body>
+<div th:replace="template"></div>
+<div class="container mt-5">
+    <div class="card">
+
+        <div class="card-header" th:if="${mode=='new'}">Ajout des Games</div>
+        <div class="card-header" th:if="${mode=='edit'}">Modification des Games</div>
+        <div class="card-body">
+            <form th:action="@{/saveGame}" th:object="${Game}" method="post">
+
+                <input type="hidden" th:field="*{idGame}" />
+                <input type="hidden" name="page" class="form-control" th:value="${page}" />
+                <input type="hidden" name="size" class="form-control" th:value="${size}" />
+
+                <div class="form-group">
+                    <label>Nom Game:</label>
+                    <input type="text" th:field="*{nomGame}" class="form-control"/>
+                    <span th:errors="*{nomGame}" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Prix Game:</label>
+                    <input type="text" th:field="*{prixGame}" class="form-control"/>
+                    <span th:errors="*{prixGame}" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Date création:</label>
+                    <input type="date" th:field="*{dateCreation}" class="form-control"/>
+                    <span th:errors="*{dateCreation}" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Type :</label>
+                    <select name="Type" class="form-control"
+                            th:value="${Game.Type.idType}"
+                            th:if="${!#strings.isEmpty(Game.Type)}" >
+                        <option th:each="t:${Types}" th:if="${mode=='edit'}"
+                                th:value="${t.idType}" th:text="${t.nomType}"
+                                th:selected="${ t.idType==Game.Type.idType}">
+                        </option>
+                    </select>
+                    <!-- s'il s'agit d'un ajout (mode==new) ou d'une modification d'un Game ayant une catégorie null -->
+                    <select name="Type" class="form-control"
+                            th:if="${#strings.isEmpty(Game.Type)}">
+                        <option th:each="t:${Types}" th:value="${t.idType}"
+                                th:text="${t.nomType}">
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -55,7 +55,7 @@ class GamesApplicationTests {
     @Test
     public void testFindByNomGame()
     {
-        List<Game> games = gameRepository.findByNomGame("RPG");
+        List<Game> games = gameRepository.findByNomGame("FIFA");
         for (Game g : games)
         {
             System.out.println(g);
@@ -65,7 +65,7 @@ class GamesApplicationTests {
     @Test
     public void testFindByNomGameContains ()
     {
-        List<Game> games=gameRepository.findByNomGameContains("Valo");
+        List<Game> games=gameRepository.findByNomGameContains("FIFA");
         for (Game g : games)
         {
             System.out.println(g);
@@ -74,7 +74,7 @@ class GamesApplicationTests {
     @Test
     public void testfindByNomPrix()
     {
-        List<Game> games = gameRepository.findByNomPrix("Valo", 0.0);
+        List<Game> games = gameRepository.findByNomPrix("FIFA", 60.0);
         for (Game g : games)
         {
             System.out.println(g);
@@ -85,7 +85,7 @@ class GamesApplicationTests {
     public void testfindByType()
     {
         Type type = new Type();
-        type.setIdType(25L);
+        type.setIdType(2L);
         List<Game> games = gameRepository.findByType(type);
         for (Game g : games)
         {
@@ -96,7 +96,7 @@ class GamesApplicationTests {
     @Test
     public void findByTypeIdType()
     {
-        List<Game> games = gameRepository.findByTypeIdType(25L);
+        List<Game> games = gameRepository.findByTypeIdType(8L);
         for (Game g : games)
         {
             System.out.println(g);
