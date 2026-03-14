@@ -1,43 +1,41 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
-<link rel="stylesheet" type="text/css"
-      href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
-<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
-<script type="text/javascript"
-        src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
 <head>
     <meta charset="utf-8">
     <title>Gestion des games</title>
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <a class="navbar-brand" href="#">Gestion games</a>
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" th:href="@{ListeGames}" >Home</a>
+            <a class="nav-link" th:href="@{ListeGames}">Home</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                 games
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" th:href="@{showCreate}">Ajouter</a>
+                <!-- visible to ADMIN and AGENT only -->
+                <a th:if="${isAdmin or isAgent}" class="dropdown-item"
+                   th:href="@{showCreate}">Ajouter</a>
                 <a class="dropdown-item" th:href="@{ListeGames}">Lister</a>
             </div>
         </li>
     </ul>
 
-    <ul class="navbar-nav ml-auto" >
+    <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbardrop1" data-toggle="dropdown">
-                [username]
+            <a class="nav-link dropdown-toggle" href="#" id="navbar-drop" data-toggle="dropdown">
+                <!-- show username -->
+                <span th:text="${username}"></span>
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">login</a>
-                <a class="dropdown-item" href="#">logout</a>
+                <a class="dropdown-item" th:href="@{logout}">Logout</a>
                 <a class="dropdown-item" href="#">Profile</a>
             </div>
         </li>

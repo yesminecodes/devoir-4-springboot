@@ -6,9 +6,12 @@ import com.yesmine.games.service.GameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +25,11 @@ public class GameController {
     @Autowired
     GameService gameService;
 
+    @GetMapping(value = "/")
+    public String welcome() {
+        return "index";
+    }
+
     @RequestMapping("/ListeGames")
     public String listeGames(ModelMap modelMap,
                              @RequestParam(name="page", defaultValue="0") int page,
@@ -31,6 +39,7 @@ public class GameController {
         modelMap.addAttribute("pages", new int[games.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
         modelMap.addAttribute("size", size);
+        addSecurityAttributes(modelMap);
         return "listeGames";
     }
 
@@ -41,6 +50,8 @@ public class GameController {
         modelMap.addAttribute("Game", new Game());
         modelMap.addAttribute("mode", "new");
         modelMap.addAttribute("Types", types);
+        modelMap.addAttribute("isAdmin", isAdmin());
+        addSecurityAttributes(modelMap);
         return "formGame";
     }
 
@@ -65,7 +76,7 @@ public class GameController {
             Page<Game> games = gameService.getAllGamesParPage(page, size);
             page = games.getTotalPages() - 1;
         }
-
+        addSecurityAttributes(modelMap);
         return "redirect:/ListeGames?page=" + page + "&size=" + size;
     }
 
@@ -80,6 +91,8 @@ public class GameController {
         modelMap.addAttribute("pages", new int[games.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
         modelMap.addAttribute("size", size);
+        modelMap.addAttribute("isAdmin", isAdmin());
+        addSecurityAttributes(modelMap);
         return "listeGames";
     }
 
@@ -94,8 +107,9 @@ public class GameController {
         modelMap.addAttribute("Game", g);
         modelMap.addAttribute("mode", "edit");
         modelMap.addAttribute("Types", types);
-        modelMap.addAttribute("currentPage", page);  // ✅ pass page to the form
-        modelMap.addAttribute("size", size);          // ✅ pass size to the form
+        modelMap.addAttribute("currentPage", page);
+        modelMap.addAttribute("size", size);
+        addSecurityAttributes(modelMap);
         return "formGame";
     }
 
@@ -113,9 +127,26 @@ public class GameController {
         modelMap.addAttribute("pages", new int[games.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
         modelMap.addAttribute("size", size);
+        modelMap.addAttribute("isAdmin", isAdmin());
+        addSecurityAttributes(modelMap);
         return "listeGames";
     }
+    private boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+    }
 
+    private void addSecurityAttributes(ModelMap modelMap) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean isAgent = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("AGENT"));
+        modelMap.addAttribute("isAdmin", isAdmin);
+        modelMap.addAttribute("isAgent", isAgent);
+        modelMap.addAttribute("username", auth.getName());
+    }
 }
 
 

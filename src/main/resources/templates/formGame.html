@@ -40,7 +40,7 @@
 
                 <div class="form-group">
                     <label class="control-label">Type :</label>
-                    <!-- Game has a type already (edit mode with existing type) -->
+
                     <select name="Type" class="form-control" th:if="${Game.type != null}">
                         <option th:each="t:${Types}"
                                 th:value="${t.idType}"
@@ -48,7 +48,7 @@
                                 th:selected="${t.idType == Game.type.idType}">
                         </option>
                     </select>
-                    <!-- Game has no type (new game or edit with null type) -->
+
                     <select name="Type" class="form-control" th:if="${Game.type == null}">
                         <option th:each="t:${Types}"
                                 th:value="${t.idType}"
