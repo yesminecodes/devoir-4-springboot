@@ -16,6 +16,7 @@ public class Game {
     private String nomGame;
     @Min(value = 0)
     @Max(value = 10000)
+    @NotNull(message = "Le prix ne peut pas être vide")
     private Double prixGame;
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")

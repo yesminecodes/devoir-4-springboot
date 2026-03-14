@@ -17,8 +17,8 @@
             <form th:action="@{/saveGame}" th:object="${Game}" method="post">
 
                 <input type="hidden" th:field="*{idGame}" />
-                <input type="hidden" name="page" class="form-control" th:value="${page}" />
-                <input type="hidden" name="size" class="form-control" th:value="${size}" />
+                <input type="hidden" name="page" th:value="${currentPage}" />
+                <input type="hidden" name="size" th:value="${size}" />
 
                 <div class="form-group">
                     <label>Nom Game:</label>
@@ -40,24 +40,24 @@
 
                 <div class="form-group">
                     <label class="control-label">Type :</label>
-                    <select name="Type" class="form-control"
-                            th:value="${Game.Type.idType}"
-                            th:if="${!#strings.isEmpty(Game.Type)}" >
-                        <option th:each="t:${Types}" th:if="${mode=='edit'}"
-                                th:value="${t.idType}" th:text="${t.nomType}"
-                                th:selected="${ t.idType==Game.Type.idType}">
+                    <!-- Game has a type already (edit mode with existing type) -->
+                    <select name="Type" class="form-control" th:if="${Game.type != null}">
+                        <option th:each="t:${Types}"
+                                th:value="${t.idType}"
+                                th:text="${t.nomType}"
+                                th:selected="${t.idType == Game.type.idType}">
                         </option>
                     </select>
-                    <!-- s'il s'agit d'un ajout (mode==new) ou d'une modification d'un Game ayant une catégorie null -->
-                    <select name="Type" class="form-control"
-                            th:if="${#strings.isEmpty(Game.Type)}">
-                        <option th:each="t:${Types}" th:value="${t.idType}"
+                    <!-- Game has no type (new game or edit with null type) -->
+                    <select name="Type" class="form-control" th:if="${Game.type == null}">
+                        <option th:each="t:${Types}"
+                                th:value="${t.idType}"
                                 th:text="${t.nomType}">
                         </option>
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Ajouter</button>
+                <button type="submit" class="btn btn-primary" th:text="${mode=='edit'} ? 'Modifier' : 'Ajouter'"></button>
             </form>
         </div>
     </div>

@@ -45,26 +45,29 @@ public class GameController {
     }
 
     @RequestMapping("/saveGame")
-    public String saveGame(@Valid Game Game, BindingResult bindingResult,
-                              @RequestParam (name="page",defaultValue = "0") int page,
-                              @RequestParam (name="size",defaultValue = "5") int size)
-    {
-        int currentPage;
-        boolean isNew = false;
-        if (bindingResult.hasErrors()) return "formGame";
-        if (Game.getIdGame()==null) //ajout
-            isNew=true;
-        gameService.saveGame(Game);
-        if (isNew) //ajout
-        {
-            Page<Game> games = gameService.getAllGamesParPage(page, size);
-            currentPage = games.getTotalPages()-1;
-        }
-        else //modif
-            currentPage=page;
-        return ("redirect:/ListeGames?page="+currentPage+"&size="+size);
-    }
+    public String saveGame(@Valid @ModelAttribute("Game") Game game,
+                           BindingResult bindingResult,
+                           @RequestParam(name="page", defaultValue="0") int page,
+                           @RequestParam(name="size", defaultValue="5") int size,
+                           ModelMap modelMap) {
 
+        if (bindingResult.hasErrors()) {
+            List<Type> types = gameService.getAllTypes();
+            modelMap.addAttribute("Game", game);
+            modelMap.addAttribute("Types", types);
+            modelMap.addAttribute("mode", game.getIdGame() == null ? "new" : "edit");
+            return "formGame";
+        }
+
+        gameService.saveGame(game);
+
+        if (game.getIdGame() == null) {
+            Page<Game> games = gameService.getAllGamesParPage(page, size);
+            page = games.getTotalPages() - 1;
+        }
+
+        return "redirect:/ListeGames?page=" + page + "&size=" + size;
+    }
 
     @RequestMapping("/supprimerGame")
     public String supprimerGame(@RequestParam("id") Long id,
@@ -81,13 +84,18 @@ public class GameController {
     }
 
     @RequestMapping("/modifierGame")
-    public String editerGame(@RequestParam("id") Long id,ModelMap modelMap)
+    public String editerGame(@RequestParam("id") Long id,
+                             @RequestParam(name="page", defaultValue="0") int page,
+                             @RequestParam(name="size", defaultValue="5") int size,
+                             ModelMap modelMap)
     {
-        Game g= gameService.getGame(id);
+        Game g = gameService.getGame(id);
         List<Type> types = gameService.getAllTypes();
         modelMap.addAttribute("Game", g);
         modelMap.addAttribute("mode", "edit");
         modelMap.addAttribute("Types", types);
+        modelMap.addAttribute("currentPage", page);  // ✅ pass page to the form
+        modelMap.addAttribute("size", size);          // ✅ pass size to the form
         return "formGame";
     }
 
@@ -107,6 +115,7 @@ public class GameController {
         modelMap.addAttribute("size", size);
         return "listeGames";
     }
+
 }
 
 
