@@ -18,7 +18,7 @@
             <table class="table table-striped">
                 <tr>
                     <th>ID</th><th>Nom Game</th><th>Prix</th><th>Date</th><th>Type</th>
-                    <th th:if="${isAdmin}">Actions</th>
+                    <th th:if="${isAdmin}" colspan="2">Actions</th>
                 </tr>
                 <tr th:each="g:${Games.content}">
                     <td th:text="${g.idGame}"></td>

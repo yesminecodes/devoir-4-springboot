@@ -9,7 +9,7 @@
     <script type="text/javascript" src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+<nav th:fragment="navbar" class="navbar navbar-expand-sm bg-dark navbar-dark">
     <a class="navbar-brand" href="#">Gestion games</a>
     <ul class="navbar-nav">
         <li class="nav-item">
@@ -20,9 +20,8 @@
                 games
             </a>
             <div class="dropdown-menu">
-                <!-- visible to ADMIN and AGENT only -->
-                <a th:if="${isAdmin or isAgent}" class="dropdown-item"
-                   th:href="@{showCreate}">Ajouter</a>
+                <a th:if="${(isAdmin ?: false) or (isAgent ?: false)}" class="dropdown-item"
+                   th:href="@{/showCreate}">Ajouter</a>
                 <a class="dropdown-item" th:href="@{ListeGames}">Lister</a>
             </div>
         </li>
@@ -31,8 +30,7 @@
     <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbar-drop" data-toggle="dropdown">
-                <!-- show username -->
-                <span th:text="${username}"></span>
+                <span th:text="${username ?: ''}"></span>
             </a>
             <div class="dropdown-menu">
                 <a class="dropdown-item" th:href="@{logout}">Logout</a>

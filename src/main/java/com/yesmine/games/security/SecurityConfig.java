@@ -4,51 +4,51 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig {
+
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception
-    {
-        http.authorizeHttpRequests((requests)->requests
-
-                        .requestMatchers("/modifierGame", "/updateGame", "/supprimerGame").hasAuthority("ADMIN")
-
-                        .requestMatchers("/showCreate", "/saveGame").hasAnyAuthority("ADMIN", "AGENT")
-
-                        .requestMatchers("/ListeGames").hasAnyAuthority("ADMIN", "AGENT", "USER")
-
-                        .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
-                .exceptionHandling((exception)->
-                        exception.accessDeniedPage("/accessDenied"));
-
-        return http.build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin")
-                .password("123")
-                .authorities("ADMIN")
-                .build();
-        UserDetails userYesmine = User.withDefaultPasswordEncoder()
-                .username("yesmine")
-                .password("123")
-                .authorities("AGENT","USER")
-                .build();
-        UserDetails user1 = User.withDefaultPasswordEncoder()
-                .username("user1")
-                .password("123")
-                .authorities("USER")
-                .build();
+    /*@Bean
+    public JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
 
-        return new InMemoryUserDetailsManager(admin, userYesmine,user1);
+        jdbcUserDetailsManager.setUsersByUsernameQuery(
+                "SELECT username, password, enabled FROM user WHERE username = ?");
+
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery(
+                "SELECT u.username, r.role AS authority " +
+                        "FROM user_role ur, user u, role r " +
+                        "WHERE u.user_id = ur.user_id AND ur.role_id = r.role_id AND u.username = ?");
+
+        return jdbcUserDetailsManager;
+    }*/
+
+    @Bean
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/login", "/webjars/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/ListeGames", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout.permitAll());
+
+        return http.build();
     }
 }

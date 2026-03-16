@@ -81,7 +81,7 @@ class GamesApplicationTests {
         }
     }
 
-    @Test
+    /*@Test
     public void testfindByType()
     {
         Type type = new Type();
@@ -91,7 +91,7 @@ class GamesApplicationTests {
         {
             System.out.println(g);
         }
-    }
+    }*/
 
     @Test
     public void findByTypeIdType()

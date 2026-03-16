@@ -13,12 +13,23 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 public class Type {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idType;
+
     private String nomType;
     private String descriptionType;
+
     @JsonIgnore
     @OneToMany(mappedBy = "type")
     private List<Game> Games;
+
+    public Long getIdType() {
+        return idType;
+    }
+
+    public String getNomType() {
+        return nomType;
+    }
 }
