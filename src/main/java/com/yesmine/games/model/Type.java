@@ -25,11 +25,4 @@ public class Type {
     @OneToMany(mappedBy = "type")
     private List<Game> Games;
 
-    public Long getIdType() {
-        return idType;
-    }
-
-    public String getNomType() {
-        return nomType;
-    }
 }

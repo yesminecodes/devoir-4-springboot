@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
@@ -27,6 +29,9 @@ public class GamesApplication implements CommandLineRunner {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RepositoryRestConfiguration repositoryRestConfiguration;
     public static void main(String[] args) {
         SpringApplication.run(GamesApplication.class, args);
     }
@@ -56,6 +61,7 @@ public class GamesApplication implements CommandLineRunner {
         gameService.saveGame(new Game("Minecraft", 30.0, new Date()));
         gameService.saveGame(new Game("GTA V", 40.0, new Date()));
         gameService.saveGame(new Game("Fortnite", 0.0, new Date()));*/
+        repositoryRestConfiguration.exposeIdsFor(Game.class);
     }
 
 }

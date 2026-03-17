@@ -1,6 +1,6 @@
 package com.yesmine.games.controllers;
 
-import com.yesmine.games.model.Game;
+import com.yesmine.games.dto.GameDTO;
 import com.yesmine.games.model.Type;
 import com.yesmine.games.service.GameService;
 import jakarta.validation.Valid;
@@ -22,6 +22,7 @@ import java.util.List;
 
 @Controller
 public class GameController {
+
     @Autowired
     GameService gameService;
 
@@ -34,7 +35,7 @@ public class GameController {
     public String listeGames(ModelMap modelMap,
                              @RequestParam(name="page", defaultValue="0") int page,
                              @RequestParam(name="size", defaultValue="5") int size) {
-        Page<Game> games = gameService.getAllGamesParPage(page, size);
+        Page<GameDTO> games = gameService.getAllGamesParPage(page, size);
         modelMap.addAttribute("Games", games);
         modelMap.addAttribute("pages", new int[games.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
@@ -44,10 +45,9 @@ public class GameController {
     }
 
     @RequestMapping("/showCreate")
-    public String showCreate(ModelMap modelMap)
-    {
+    public String showCreate(ModelMap modelMap) {
         List<Type> types = gameService.getAllTypes();
-        modelMap.addAttribute("Game", new Game());
+        modelMap.addAttribute("Game", new GameDTO());
         modelMap.addAttribute("mode", "new");
         modelMap.addAttribute("Types", types);
         modelMap.addAttribute("isAdmin", isAdmin());
@@ -56,7 +56,7 @@ public class GameController {
     }
 
     @RequestMapping("/saveGame")
-    public String saveGame(@Valid @ModelAttribute("Game") Game game,
+    public String saveGame(@Valid @ModelAttribute("Game") GameDTO gameDTO,
                            BindingResult bindingResult,
                            @RequestParam(name="page", defaultValue="0") int page,
                            @RequestParam(name="size", defaultValue="5") int size,
@@ -64,16 +64,16 @@ public class GameController {
 
         if (bindingResult.hasErrors()) {
             List<Type> types = gameService.getAllTypes();
-            modelMap.addAttribute("Game", game);
+            modelMap.addAttribute("Game", gameDTO);
             modelMap.addAttribute("Types", types);
-            modelMap.addAttribute("mode", game.getIdGame() == null ? "new" : "edit");
+            modelMap.addAttribute("mode", gameDTO.getIdGame() == null ? "new" : "edit");
             return "formGame";
         }
 
-        gameService.saveGame(game);
+        gameService.saveGame(gameDTO);
 
-        if (game.getIdGame() == null) {
-            Page<Game> games = gameService.getAllGamesParPage(page, size);
+        if (gameDTO.getIdGame() == null) {
+            Page<GameDTO> games = gameService.getAllGamesParPage(page, size);
             page = games.getTotalPages() - 1;
         }
         addSecurityAttributes(modelMap);
@@ -86,7 +86,7 @@ public class GameController {
                                 @RequestParam(name="size", defaultValue="5") int size,
                                 ModelMap modelMap) {
         gameService.deleteGameById(id);
-        Page<Game> games = gameService.getAllGamesParPage(page, size);
+        Page<GameDTO> games = gameService.getAllGamesParPage(page, size);
         modelMap.addAttribute("Games", games);
         modelMap.addAttribute("pages", new int[games.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
@@ -100,11 +100,10 @@ public class GameController {
     public String editerGame(@RequestParam("id") Long id,
                              @RequestParam(name="page", defaultValue="0") int page,
                              @RequestParam(name="size", defaultValue="5") int size,
-                             ModelMap modelMap)
-    {
-        Game g = gameService.getGame(id);
+                             ModelMap modelMap) {
+        GameDTO gameDTO = gameService.getGame(id);
         List<Type> types = gameService.getAllTypes();
-        modelMap.addAttribute("Game", g);
+        modelMap.addAttribute("Game", gameDTO);
         modelMap.addAttribute("mode", "edit");
         modelMap.addAttribute("Types", types);
         modelMap.addAttribute("currentPage", page);
@@ -114,15 +113,15 @@ public class GameController {
     }
 
     @RequestMapping("/updateGame")
-    public String updateGame(@ModelAttribute("Game") Game game,
+    public String updateGame(@ModelAttribute("Game") GameDTO gameDTO,
                              @RequestParam("date") String date,
                              @RequestParam(name="page", defaultValue="0") int page,
                              @RequestParam(name="size", defaultValue="5") int size,
                              ModelMap modelMap) throws ParseException {
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
-        game.setDateCreation(dateformat.parse(date));
-        gameService.updateGame(game);
-        Page<Game> games = gameService.getAllGamesParPage(page, size);
+        gameDTO.setDateCreation(dateformat.parse(date));
+        gameService.updateGame(gameDTO);
+        Page<GameDTO> games = gameService.getAllGamesParPage(page, size);
         modelMap.addAttribute("Games", games);
         modelMap.addAttribute("pages", new int[games.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
@@ -131,6 +130,7 @@ public class GameController {
         addSecurityAttributes(modelMap);
         return "listeGames";
     }
+
     private boolean isAdmin() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return auth.getAuthorities().stream()
@@ -148,5 +148,3 @@ public class GameController {
         modelMap.addAttribute("username", auth.getName());
     }
 }
-
-
